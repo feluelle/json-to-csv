@@ -1,21 +1,20 @@
-import com.fasterxml.jackson.databind.ObjectMapper;
+package core;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * Created by Felix on 09.04.2017.
+ * Created by Felix on 12.05.2017.
  */
-
-public class JsonToCsvConverter {
-
+public class JsonToCsvCore {
     private static int biggestSize = 0;
 
-    public static String jsonToCsv(String json) throws IOException {
-        LinkedHashMap<String, Object> linkedHashMap = new ObjectMapper().readValue(json, LinkedHashMap.class);
-
-        String headerLine = createHeaderLine(linkedHashMap);
-        String bodyLines = createBodyLines(linkedHashMap);
+    public static String jsonMapToCsv(LinkedHashMap<String, Object> jsonMap) throws IOException {
+        String headerLine = createHeaderLine(jsonMap);
+        String bodyLines = createBodyLines(jsonMap);
 
         return headerLine + bodyLines;
     }
@@ -54,6 +53,8 @@ public class JsonToCsvConverter {
 
             bodyLines.append(bodyLine);
         }
+
+        biggestSize = 0; // TODO: find a better solution
 
         return bodyLines.toString();
     }
