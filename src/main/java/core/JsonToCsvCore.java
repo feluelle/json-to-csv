@@ -6,13 +6,13 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Created by Felix on 12.05.2017.
- */
 public class JsonToCsvCore {
     private static int biggestSize = 0;
 
     public static String jsonMapToCsv(LinkedHashMap<String, Object> jsonMap) throws IOException {
+        if (jsonMap.isEmpty())
+            return "";
+
         String headerLine = createHeaderLine(jsonMap);
         String bodyLines = createBodyLines(jsonMap);
 

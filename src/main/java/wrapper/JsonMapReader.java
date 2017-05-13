@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-/**
- * Created by Felix on 12.05.2017.
- */
 class JsonMapReader {
 
     static LinkedHashMap<String, Object> readJsonOriginal(String json) throws IOException {
