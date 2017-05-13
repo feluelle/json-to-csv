@@ -2,10 +2,11 @@
 Converts JSON to CSV
 
 ## Notes
-The **biggest array size** determines the **number of csv lines**.
+The field's **biggest value size** determines the **number of csv lines**.
 * Ignores empty json objects
-* Writes the same object in every row
-* The index of the array will be incremented after each row
+* Writes values in each row as long as the biggest size is not reached.
+* The index of the array will be incremented after each row.
+That means after an array size is reached there won't be further values in this column.
 
 ## Example
 This json..
