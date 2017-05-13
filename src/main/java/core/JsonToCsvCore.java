@@ -1,13 +1,14 @@
 package core;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class JsonToCsvCore {
-    private static int biggestSize = 0;
+    private static final String separatorColumn = ";";
+    private static final String separatorNewLine = "\n";
+
+    private static int numberOfLinesMax = 0;
+    private static String parentKey = "";
 
     public static String jsonMapToCsv(LinkedHashMap<String, Object> jsonMap) throws IOException {
         if (jsonMap.isEmpty())
@@ -20,81 +21,74 @@ public class JsonToCsvCore {
     }
 
     private static String createHeaderLine(LinkedHashMap<String, Object> jsonMap) {
-        String header = createHeader(new StringBuilder(), "", jsonMap);
-        String headerLine = toLine(header);
-
-        return headerLine;
+        return createHeader(new StringJoiner(separatorColumn), jsonMap) + separatorNewLine;
     }
 
-    private static String createHeader(StringBuilder stringBuilder, String jsonParentName, LinkedHashMap<String, Object> jsonMap) {
+    private static String createHeader(StringJoiner csvString, LinkedHashMap<String, Object> jsonMap) {
         for (Map.Entry<String, Object> entry : jsonMap.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
 
             if (value instanceof LinkedHashMap) {
-                jsonParentName += key + ".";
-                createHeader(stringBuilder, jsonParentName, LinkedHashMap.class.cast(value));
+                LinkedHashMap<String, Object> linkedHashMap = LinkedHashMap.class.cast(value);
+                if (linkedHashMap.size() > 0) {
+                    parentKey += key + ".";
+                    createHeader(csvString, linkedHashMap);
+                }
             } else {
-                stringBuilder.append(jsonParentName).append(key).append(";");
+                csvString.add(parentKey + key);
+                parentKey = "";
             }
         }
 
-        return stringBuilder.toString();
+        return csvString.toString();
     }
 
     private static String createBodyLines(LinkedHashMap<String, Object> jsonMap) {
-        findBiggestArraySize(jsonMap.values());
+        calculateNumberOfLines(jsonMap.values());
 
-        StringBuilder bodyLines = new StringBuilder();
+        StringJoiner csvString = new StringJoiner(separatorNewLine);
 
-        for (int i = 0; i < biggestSize; i++) {
-            String body = createBody(i, new StringBuilder(), jsonMap);
-            String bodyLine = toLine(body);
+        for (int i = 0; i < numberOfLinesMax; i++)
+            csvString.add(createBody(i, new StringJoiner(separatorColumn), jsonMap));
 
-            bodyLines.append(bodyLine);
-        }
+        numberOfLinesMax = 0; // TODO: find a better solution
 
-        biggestSize = 0; // TODO: find a better solution
-
-        return bodyLines.toString();
+        return csvString.toString();
     }
 
-    private static String createBody(int i, StringBuilder stringBuilder, LinkedHashMap<String, Object> jsonMap) {
+    private static String createBody(int i, StringJoiner csvString, LinkedHashMap<String, Object> jsonMap) {
         for (Object value : jsonMap.values()) {
             if (value instanceof LinkedHashMap) {
-                createBody(i, stringBuilder, LinkedHashMap.class.cast(value));
+                createBody(i, csvString, LinkedHashMap.class.cast(value));
             } else if (value instanceof ArrayList) {
                 ArrayList arrayList = ArrayList.class.cast(value);
 
                 if (i < arrayList.size())
-                    stringBuilder.append(arrayList.get(i));
-
-                stringBuilder.append(";");
+                    csvString.add(arrayList.get(i).toString());
+                else
+                    csvString.add("");
             } else {
-                stringBuilder.append(value).append(";");
+                csvString.add(value.toString());
             }
         }
 
-        return stringBuilder.toString();
+        return csvString.toString();
     }
 
-    private static String toLine(String csvString) {
-        return csvString.substring(0, csvString.length() - 1) + "\n";
-    }
-
-    private static void findBiggestArraySize(Collection collection) {
-        int size = 0;
+    private static void calculateNumberOfLines(Collection collection) {
+        int numberOfLinesCurr = 0;
 
         for (Object object : collection) {
             if (object instanceof ArrayList)
-                size = ArrayList.class.cast(object).size();
+                numberOfLinesCurr = ArrayList.class.cast(object).size();
             else if (object instanceof LinkedHashMap)
-                findBiggestArraySize(LinkedHashMap.class.cast(object).values());
+                calculateNumberOfLines(LinkedHashMap.class.cast(object).values());
             else
-                size = 1;
+                numberOfLinesCurr = 1;
 
-            if (size > biggestSize)
-                biggestSize = size;
+            if (numberOfLinesCurr > numberOfLinesMax)
+                numberOfLinesMax = numberOfLinesCurr;
         }
     }
 }

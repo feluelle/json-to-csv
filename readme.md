@@ -1,6 +1,35 @@
 # json-to-csv
 Converts JSON to CSV
 
+## Notes
+The **biggest array size** determines the **number of csv lines**.
+* Ignores empty json objects
+* Writes the same object in every row
+* The index of the array will be incremented after each row
+
+## Example
+This json..
+```
+{
+    "field1": "value1",
+    "field2": [1, 2, 3],
+    "field3": {
+        "field3-a": 4.0
+    },
+    "field4": { },
+    "field5": [4, 5, 6, 7, 8]
+}
+```
+will be this csv..
+```
+field1;field2;field3.field3-a;field5
+value1;1;4.0;4
+value1;2;4.0;5
+value1;3;4.0;6
+value1;;4.0;7
+value1;;4.0;8
+```
+
 ## Dependencies
 
 ### json
