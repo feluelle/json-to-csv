@@ -17,8 +17,28 @@ public class ValidJsonStrings {
             jsonObject = "{\"field\":{\"field-a\":4.0}}",
             csvObject = "field.field-a\n4.0";
     private static final String
-            jsonAll = "{\"field1\":\"value1\",\"field2\":[1,2,3],\"field3\":{\"field3-a\":4.0},\"field4\":{},\"field5\":[4,5,6,7,8]}",
-            csvAll = "field1;field2;field3.field3-a;field5\nvalue1;1;4.0;4\nvalue1;2;4.0;5\nvalue1;3;4.0;6\nvalue1;;4.0;7\nvalue1;;4.0;8";
+            jsonAll = "{" +
+            "\"field1\":\"value1\"," +
+            "\"field2\":[1,2,3]," +
+            "\"field3\":{" +
+            "\"field3-a\":4.0" +
+            "}," +
+            "\"field4\":{}," +
+            "\"field5\":[" +
+            "{\"field5-a\":5.1}," +
+            "{\"field5-a\":6}," +
+            "{\"field5-a\":7}," +
+            "{\"field5-a\":8}," +
+            "{\"field5-a\":9}" +
+            "]," +
+            "\"field6\":[]" +
+            "}",
+            csvAll = "field1;field2;field3.field3-a;field4;field5.field5-a;field6\n" +
+                    "value1;1;4.0;;5.1;\n" +
+                    "value1;2;4.0;;6;\n" +
+                    "value1;3;4.0;;7;\n" +
+                    "value1;;4.0;;8;\n" +
+                    "value1;;4.0;;9;";
 
     @Test
     public void emptyTest() throws IOException {
