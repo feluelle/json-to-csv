@@ -25,20 +25,20 @@ public class ValidJsonStrings {
             "}," +
             "\"field4\":{}," +
             "\"field5\":[" +
-            "{\"field5-a\":5.1}," +
-            "{\"field5-a\":6}," +
-            "{\"field5-a\":7}," +
-            "{\"field5-a\":8}," +
-            "{\"field5-a\":9}" +
+            "{\"field5-a\":5,\"field5-b\":5.1}," +
+            "{\"field5-a\":6,\"field5-b\":6.1}," +
+            "{\"field5-a\":7,\"field5-b\":7.1}," +
+            "{\"field5-a\":8,\"field5-b\":8.1}," +
+            "{\"field5-a\":9,\"field5-b\":9.1}" +
             "]," +
             "\"field6\":[]" +
             "}",
-            csvAll = "field1;field2;field3.field3-a;field4;field5.field5-a;field6\n" +
-                    "value1;1;4.0;;5.1;\n" +
-                    "value1;2;4.0;;6;\n" +
-                    "value1;3;4.0;;7;\n" +
-                    "value1;;4.0;;8;\n" +
-                    "value1;;4.0;;9;";
+            csvAll = "field1;field2;field3.field3-a;field4;field5.field5-a;field5.field5-b;field6\n" +
+                    "value1;1;4.0;;5;5.1;\n" +
+                    "value1;2;4.0;;6;6.1;\n" +
+                    "value1;3;4.0;;7;7.1;\n" +
+                    "value1;;4.0;;8;8.1;\n" +
+                    "value1;;4.0;;9;9.1;";
 
     @Test
     public void emptyTest() throws IOException {

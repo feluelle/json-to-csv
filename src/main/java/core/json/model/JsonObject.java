@@ -6,11 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class JsonObject implements JsonElement {
-
     private LinkedHashMap<String, Object> linkedHashMap;
 
     public JsonObject(Object object) {
-        this.linkedHashMap = LinkedHashMap.class.cast(object);
+        linkedHashMap = LinkedHashMap.class.cast(object);
     }
 
     public JsonObject(LinkedHashMap<String, Object> linkedHashMap) {
@@ -26,12 +25,8 @@ public class JsonObject implements JsonElement {
         return linkedHashMap.entrySet();
     }
 
-    public Collection getValues() {
+    public Collection<Object> getValues() {
         return linkedHashMap.values();
-    }
-
-    public LinkedHashMap<String, Object> get() {
-        return linkedHashMap;
     }
 
     @Override

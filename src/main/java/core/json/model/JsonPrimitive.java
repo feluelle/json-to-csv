@@ -1,7 +1,6 @@
 package core.json.model;
 
 public class JsonPrimitive implements JsonElement {
-
     private Object object;
 
     public JsonPrimitive(Object object) {

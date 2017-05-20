@@ -7,19 +7,20 @@ import core.json.model.JsonObject;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static core.csv.model.CsvFinals.separatorColumn;
 import static core.csv.model.CsvFinals.separatorKey;
 import static core.csv.model.CsvFinals.separatorNewLine;
-import static core.json.model.JsonElementFactory.getJsonType;
+import static util.JsonHelper.getJsonType;
 
 public class JsonToCsvCore {
+    private final static JsonElementFactory jsonElementFactory = new JsonElementFactory();
+
     public static String jsonMapToCsv(LinkedHashMap<String, Object> jsonMap) throws IOException {
         JsonObject jsonObject = new JsonObject(jsonMap);
 
-        String headerLine = createHeaderLine(jsonObject);
-
-        return jsonObject.hasElements() ? headerLine + createBodyLines(jsonObject) : "";
+        return jsonObject.hasElements() ? createHeaderLine(jsonObject) + createBodyLines(jsonObject) : "";
     }
 
     private static String createHeaderLine(JsonObject jsonObject) {
@@ -28,19 +29,23 @@ public class JsonToCsvCore {
                 .collect(Collectors.joining(separatorColumn)) + separatorNewLine;
     }
 
+    private static String createHeaderFields(String parentKey, JsonObject jsonObject) {
+        return jsonObject.getElements().stream()
+                .map(object -> parentKey + separatorKey + createHeaderField(object.getKey(), object.getValue()))
+                .collect(Collectors.joining(separatorColumn));
+    }
+
     private static String createHeaderField(String key, Object value) {
         switch (getJsonType(value)) {
             case Object:
                 JsonObject jsonObject = new JsonObject(value);
                 if (jsonObject.hasElements())
-                    key += separatorKey + jsonObject.getElements().stream()
-                            .map(e -> createHeaderField(e.getKey(), e.getValue()))
-                            .collect(Collectors.joining(separatorColumn));
+                    return createHeaderFields(key, jsonObject);
                 break;
             case Array:
                 JsonArray jsonArray = new JsonArray(value);
                 if (jsonArray.hasElements())
-                    key = createHeaderField(key, jsonArray.getFirstElement());
+                    return createHeaderField(key, jsonArray.getFirstElement());
                 break;
             case Other:
             default:
@@ -51,63 +56,38 @@ public class JsonToCsvCore {
     }
 
     private static String createBodyLines(JsonObject jsonObject) {
-        StringJoiner lines = new StringJoiner(separatorNewLine);
-
-        for (int i = 0; i < getMaxNumberOfLines(jsonObject); i++)
-            lines.add(createBodyFields(i, jsonObject));
-
-        return lines.toString();
+        return IntStream.range(0, getMaxNumberOfLines(jsonObject))
+                .mapToObj(i -> createBodyFields(i, jsonObject))
+                .collect(Collectors.joining(separatorNewLine));
     }
 
     private static String createBodyFields(int index, JsonObject jsonObject) {
-        StringJoiner fields = new StringJoiner(separatorColumn);
+        return jsonObject.getValues().stream()
+                .map(object -> createBodyField(index, object))
+                .collect(Collectors.joining(separatorColumn));
+    }
 
-        for (Object value : jsonObject.getValues())
-            switch (getJsonType(value)) {
-                case Object:
-                    fields.add(createBodyFields(index, new JsonObject(value)));
-                    break;
-                case Array:
-                    JsonArray jsonArray = new JsonArray(value);
-
-                    if (index < jsonArray.getSize()) {
-                        Object object = jsonArray.getElement(index);
-                        switch (getJsonType(object)) {
-                            case Object:
-                                fields.add(createBodyFields(index, new JsonObject(object)));
-                                break;
-                            case Array:
-                            case Other:
-                            default:
-                                fields.add(object.toString());
-                                break;
-                        }
-                    } else
-                        fields.add("");
-                    break;
-                case Other:
-                default:
-                    fields.add(value.toString());
-                    break;
-            }
-
-        return fields.toString();
+    private static String createBodyField(int index, Object object) {
+        switch (getJsonType(object)) {
+            case Object:
+                return createBodyFields(index, new JsonObject(object));
+            case Array:
+                JsonArray jsonArray = new JsonArray(object);
+                return index < jsonArray.getSize() ? createBodyField(index, jsonArray.getElement(index)) : "";
+            case Other:
+            default:
+                return object.toString();
+        }
     }
 
     private static int getMaxNumberOfLines(JsonObject jsonObject) {
-        int numberOfLinesMax = 0;
-
-        for (Object object : jsonObject.getValues()) {
-            int numberOfLinesCurr = getNumberOfLines(object);
-
-            if (numberOfLinesCurr > numberOfLinesMax)
-                numberOfLinesMax = numberOfLinesCurr;
-        }
-
-        return numberOfLinesMax;
+        return jsonObject.getValues().stream()
+                .mapToInt(JsonToCsvCore::getNumberOfLines)
+                .max()
+                .getAsInt();
     }
 
     private static int getNumberOfLines(Object object) {
-        return new JsonElementFactory().getJsonElement(object).getSize();
+        return jsonElementFactory.getJsonElement(object).getSize();
     }
 }

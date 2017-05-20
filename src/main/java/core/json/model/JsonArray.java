@@ -3,11 +3,10 @@ package core.json.model;
 import java.util.ArrayList;
 
 public class JsonArray implements JsonElement {
-
     private ArrayList arrayList;
 
     public JsonArray(Object object) {
-        this.arrayList = ArrayList.class.cast(object);
+        arrayList = ArrayList.class.cast(object);
     }
 
     @Override
