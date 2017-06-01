@@ -19,7 +19,7 @@ public class ValidJsonStrings {
     private static final String
             jsonAll = "{" +
             "\"field1\":\"value1\"," +
-            "\"field2\":[1,2,3]," +
+            "\"field2\":[1,2,3,4,5,6,7,8,9]," +
             "\"field3\":{" +
             "\"field3-a\":4.0" +
             "}," +
@@ -37,8 +37,12 @@ public class ValidJsonStrings {
                     "value1;1;4.0;;5;5.1;\n" +
                     "value1;2;4.0;;6;6.1;\n" +
                     "value1;3;4.0;;7;7.1;\n" +
-                    "value1;;4.0;;8;8.1;\n" +
-                    "value1;;4.0;;9;9.1;";
+                    "value1;4;4.0;;8;8.1;\n" +
+                    "value1;5;4.0;;9;9.1;\n" +
+                    "value1;6;4.0;;;;\n" +
+                    "value1;7;4.0;;;;\n" +
+                    "value1;8;4.0;;;;\n" +
+                    "value1;9;4.0;;;;";
 
     @Test
     public void emptyTest() throws IOException {

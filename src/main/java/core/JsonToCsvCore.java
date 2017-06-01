@@ -39,25 +39,19 @@ public class JsonToCsvCore {
         switch (getJsonType(value)) {
             case Object:
                 JsonObject jsonObject = new JsonObject(value);
-                if (jsonObject.hasElements())
-                    return createHeaderFields(key, jsonObject);
-                break;
+                return jsonObject.hasElements() ? createHeaderFields(key, jsonObject) : key;
             case Array:
                 JsonArray jsonArray = new JsonArray(value);
-                if (jsonArray.hasElements())
-                    return createHeaderField(key, jsonArray.getFirstElement());
-                break;
+                return jsonArray.hasElements() ? createHeaderField(key, jsonArray.getFirstElement()) : key;
             case Other:
             default:
-                break;
+                return key;
         }
-
-        return key;
     }
 
     private static String createBodyLines(JsonObject jsonObject) {
         return IntStream.range(0, getMaxNumberOfLines(jsonObject))
-                .mapToObj(i -> createBodyFields(i, jsonObject))
+                .mapToObj(index -> createBodyFields(index, jsonObject))
                 .collect(Collectors.joining(separatorNewLine));
     }
 
