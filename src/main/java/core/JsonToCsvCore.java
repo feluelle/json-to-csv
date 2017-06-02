@@ -67,7 +67,14 @@ public class JsonToCsvCore {
                 return createBodyFields(index, new JsonObject(object));
             case Array:
                 JsonArray jsonArray = new JsonArray(object);
-                return index < jsonArray.getSize() ? createBodyField(index, jsonArray.getElement(index)) : "";
+
+                if (index < jsonArray.getSize())
+                    return createBodyField(index, jsonArray.getElement(index));
+
+                if (jsonArray.getFirstElement() != null)
+                    return String.join(separatorColumn, Collections.nCopies(getNumberOfElements(jsonArray.getFirstElement()), ""));
+
+                return "";
             case Other:
             default:
                 return object.toString();
@@ -76,12 +83,12 @@ public class JsonToCsvCore {
 
     private static int getMaxNumberOfLines(JsonObject jsonObject) {
         return jsonObject.getValues().stream()
-                .mapToInt(JsonToCsvCore::getNumberOfLines)
+                .mapToInt(JsonToCsvCore::getNumberOfElements)
                 .max()
                 .getAsInt();
     }
 
-    private static int getNumberOfLines(Object object) {
+    private static int getNumberOfElements(Object object) {
         return jsonElementFactory.getJsonElement(object).getSize();
     }
 }

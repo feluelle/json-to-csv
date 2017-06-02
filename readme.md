@@ -1,20 +1,22 @@
 # json-to-csv
 Converts JSON to CSV
 
-## Notes
+## How it works
 The field's **biggest value size** determines the **number of csv lines**.
 * Writes values in each row as long as the biggest size is not reached.
 * The index of the array will be incremented after each row.
 That means after an array size is reached there won't be further values in this column.
 
-**IMPORTANT**: Each object in an array has to contain the same fields.
+## Conditions (to work as expected)
+* The json is **not allowed** to have an **array inside** an **array**.
+* Each object in an **array** has to contain the **same fields**.
 
 ## Example
 This json..
 ```
 {
     "field1": "value1",
-    "field2": [1, 2, 3],
+    "field2": [1, 2, 3, 4, 5, 6, 7, 8, 9],
     "field3": {
         "field3-a": 4.0
     },
@@ -44,9 +46,26 @@ field1;field2;field3.field3-a;field4;field5.field5-a;field5.field5-b;field6
 value1;1;4.0;;5;5.1;
 value1;2;4.0;;6;6.1;
 value1;3;4.0;;7;7.1;
-value1;;4.0;;8;8.1;
-value1;;4.0;;9;9.1;
+value1;4;4.0;;8;8.1;
+value1;5;4.0;;9;9.1;
+value1;6;4.0;;;;
+value1;7;4.0;;;;
+value1;8;4.0;;;;
+value1;9;4.0;;;;
 ```
+displayed as a table..
+
+field1 | field2 | field3.field3-a | field4 | field5.field5-a | field5.field5-b | field6
+---|---|---|---|---|---|---
+value1 | 1 | 4.0 | | 5 | 5.1 |
+value1 | 2 | 4.0 | | 6 | 6.1 |
+value1 | 3 | 4.0 | | 7 | 7.1 |
+value1 | 4 | 4.0 | | 8 | 8.1 |
+value1 | 5 | 4.0 | | 9 | 9.1 |
+value1 | 6 | 4.0 | |   |     |
+value1 | 7 | 4.0 | |   |     |
+value1 | 8 | 4.0 | |   |     |
+value1 | 9 | 4.0 | |   |     |
 
 ## Dependencies
 

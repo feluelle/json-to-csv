@@ -74,8 +74,10 @@ public class ValidJsonStrings {
 
     @Test
     public void allTest() throws IOException {
-        assert JsonToCsvConverter
-                .jsonToCsv(jsonAll)
+        String test = JsonToCsvConverter
+                .jsonToCsv(jsonAll);
+
+        assert test
                 .equals(csvAll);
     }
 }
