@@ -1,4 +1,5 @@
 import org.junit.Test;
+import util.validator.InvalidJsonFormatException;
 import wrapper.JsonToCsvConverter;
 
 import java.io.IOException;
@@ -45,39 +46,37 @@ public class ValidJsonStrings {
                     "value1;9;4.0;;;;";
 
     @Test
-    public void emptyTest() throws IOException {
+    public void emptyTest() throws InvalidJsonFormatException {
         assert JsonToCsvConverter
                 .jsonToCsv(jsonEmpty)
                 .equals(csvEmpty);
     }
 
     @Test
-    public void fieldTest() throws IOException {
+    public void fieldTest() throws InvalidJsonFormatException {
         assert JsonToCsvConverter
                 .jsonToCsv(jsonField)
                 .equals(csvField);
     }
 
     @Test
-    public void arrayTest() throws IOException {
+    public void arrayTest() throws InvalidJsonFormatException {
         assert JsonToCsvConverter
                 .jsonToCsv(jsonArray)
                 .equals(csvArray);
     }
 
     @Test
-    public void objectTest() throws IOException {
+    public void objectTest() throws InvalidJsonFormatException {
         assert JsonToCsvConverter
                 .jsonToCsv(jsonObject)
                 .equals(csvObject);
     }
 
     @Test
-    public void allTest() throws IOException {
-        String test = JsonToCsvConverter
-                .jsonToCsv(jsonAll);
-
-        assert test
+    public void allTest() throws InvalidJsonFormatException {
+        assert JsonToCsvConverter
+                .jsonToCsv(jsonAll)
                 .equals(csvAll);
     }
 }

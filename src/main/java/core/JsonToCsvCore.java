@@ -17,7 +17,7 @@ import static util.JsonHelper.getJsonType;
 public class JsonToCsvCore {
     private final static JsonElementFactory jsonElementFactory = new JsonElementFactory();
 
-    public static String jsonMapToCsv(LinkedHashMap<String, Object> jsonMap) throws IOException {
+    public static String jsonMapToCsv(LinkedHashMap<String, Object> jsonMap) {
         JsonObject jsonObject = new JsonObject(jsonMap);
 
         return jsonObject.hasElements() ? createHeaderLine(jsonObject) + createBodyLines(jsonObject) : "";

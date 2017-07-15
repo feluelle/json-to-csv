@@ -22,6 +22,10 @@ public class JsonArray implements JsonElement {
         return arrayList.get(index);
     }
 
+    public ArrayList getElements() {
+        return arrayList;
+    }
+
     @Override
     public int getSize() {
         return arrayList.size();

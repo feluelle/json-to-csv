@@ -1,15 +1,20 @@
 # json-to-csv
-Converts JSON to CSV
+Converts JSON to CSV without flatting it entirely.
+So the array structure will be the same as before.
 
 ## How it works
-The field's **biggest value size** determines the **number of csv lines**.
-* Writes values in each row as long as the biggest size is not reached.
+The field's **largest value size** determines the **number of csv lines**.
+* Writes values in each row as long as the largest size is not reached.
 * The index of the array will be incremented after each row.
 That means after an array size is reached there won't be further values in this column.
 
-## Conditions (to work as expected)
-* The json is **not allowed** to have an **array inside** an **array**.
-* Each object in an **array** has to contain the **same fields**.
+## Conditions
+The json is **not allowed** to have
+* an **array inside** an **array**.
+* **different names** for **objects inside arrays**.
+
+The JsonValidator used in this application validates both conditions to secure that the correct csv will be generated.
+If any condition is false it will result in throwing an JsonInvalidFormatException.
 
 ## Example
 This json..
@@ -67,7 +72,16 @@ value1 | 7 | 4.0 | |   |     |
 value1 | 8 | 4.0 | |   |     |
 value1 | 9 | 4.0 | |   |     |
 
+by only executing this command:
+```
+String csv = JsonToCsvConverter.jsonToCsv(json);
+```
+
 ## Dependencies
 
 ### json
-This library uses com.fasterxml.jackson.core's jackson-databind to deserialize json to a map.
+This library uses com.fasterxml.jackson.core's [jackson-databind](https://github.com/FasterXML/jackson-databind) to deserialize json to a map.
+
+## Misc
+
+[jsonlint](https://jsonlint.com/) is used to test if the json validation in this library works.
